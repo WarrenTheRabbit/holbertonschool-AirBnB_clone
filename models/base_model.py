@@ -2,10 +2,12 @@
 """module containing the class BaseModel"""
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel():
     """class BaseModel"""
+
     def __init__(self, *args, **kwargs):
         """
         initializes new instances
@@ -26,14 +28,26 @@ class BaseModel():
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self):
         """default print message"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """update the attribute updated_at with current time"""
+        """Save the instance into storage with updated time"""
         self.updated_at = datetime.now()
+        storage.save()
+
+    def remove(self, key):
+        """removes object from storage
+        key: "<class name>.<instance id>"
+        """
+        storage_dic = storage.objects
+        if key in storage_dic:
+            storage_dic.pop(key)
+            storage.objects = storage_dic
+            storage.save()
 
     def to_dict(self):
         """return a dictionary with the instance
@@ -45,5 +59,6 @@ class BaseModel():
                 output_dict.update({key: value.isoformat()})
             else:
                 output_dict.update({key: value})
+        output_dict.update({"__class__": self.__class__.__name__})
         output_dict.update({"__class__": self.__class__.__name__})
         return output_dict
