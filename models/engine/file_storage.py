@@ -27,8 +27,7 @@ class FileStorage():
 
     def new(self, obj):
         """
-        Sets obj into __objects
-        following the following format
+        Sets obj into self.objects following the following format
         key: "<class name>.<instance id>"
         value: dictionary with obj attributes
         """
@@ -36,11 +35,15 @@ class FileStorage():
         self.objects.update({key: obj})
 
     def save(self):
-        """serializes (converts the objects in) __objects to the JSON file"""
+        """serializes (converts the objects in) self.objects to the JSON file"""
         json_string = json.dumps(self.objects, 
                                  default=lambda x: x.to_dict())
         with open(self.__file_path, 'w', encoding="utf-8") as f:
-            f.write(json_string)
+            json.dump(json_string, f)
+
+    def get_class(self, value: dict) -> models.BaseModel:
+        """return the Class object of an instance persisted in JSON format"""
+        return eval(f"models.{value['__class__']}")
 
     def get_class(self, value: dict) -> models.BaseModel:
         """return the Class object of an instance persisted in JSON format"""
@@ -48,7 +51,7 @@ class FileStorage():
 
     def reload(self):
         """deserializes (creates objects from) the JSON file and stores them
-        in objects"""
+        in self.objects"""
         if os.path.exists(self.__file_path):
             with open(self.__file_path, 'r', encoding="utf-8") as f:
                 obj_dicts = json.load(f)
