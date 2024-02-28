@@ -51,8 +51,8 @@ class FileStorage():
         in objects"""
         if os.path.exists(self.__file_path):
             with open(self.__file_path, 'r', encoding="utf-8") as f:
-                json_str = json.loads(f.read())
-                for key, value in json_str.items():
+                obj_dicts = json.load(f)
+                for key, value in obj_dicts.items():
                     Cls = self.get_class(value)
                     obj = Cls(**value)
                     self.objects.update({key: obj})
