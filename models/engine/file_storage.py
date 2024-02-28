@@ -2,6 +2,7 @@
 """module containing the class FileStorage"""
 import json
 import os
+import models
 
 
 class FileStorage():
@@ -22,7 +23,7 @@ class FileStorage():
 
     def all(self):
         """returns the dictionary __objects"""
-        return self.__objects
+        return self.objects
 
     def new(self, obj):
         """
@@ -32,19 +33,26 @@ class FileStorage():
         value: dictionary with obj attributes
         """
         key = obj.__class__.__name__ + "." + obj.id
-        value = obj.to_dict()
-        self.__objects.update({key: value})
+        self.objects.update({key: obj})
 
     def save(self):
-        """serializes __objects to the JSON file"""
-        json_string = json.dumps(self.__objects)
+        """serializes (converts the objects in) __objects to the JSON file"""
+        json_string = json.dumps(self.objects, 
+                                 default=lambda x: x.to_dict())
         with open(self.__file_path, 'w', encoding="utf-8") as f:
             f.write(json_string)
 
+    def get_class(self, value: dict) -> models.BaseModel:
+        """return the Class object of an instance persisted in JSON format"""
+        return eval(f"models.{value['__class__']}")
+
     def reload(self):
-        """deserializes the JSON file to __objects"""
+        """deserializes (creates objects from) the JSON file and stores them
+        in objects"""
         if os.path.exists(self.__file_path):
-            with open(self.__file_path, encoding="utf-8") as f:
+            with open(self.__file_path, 'r', encoding="utf-8") as f:
                 json_str = json.loads(f.read())
                 for key, value in json_str.items():
-                    self.__objects.update({key: value})
+                    Cls = self.get_class(value)
+                    obj = Cls(**value)
+                    self.objects.update({key: obj})
