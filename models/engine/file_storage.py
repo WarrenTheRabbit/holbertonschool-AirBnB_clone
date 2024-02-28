@@ -50,5 +50,6 @@ class FileStorage():
             with open(self.__file_path, encoding="utf-8") as f:
                 obj_dicts = json.load(f)
                 for k, val in obj_dicts.items():
-                    obj = class_map()[val["__class__"]](**val)
+                    Cls = class_map()[val["__class__"]]
+                    obj = Cls(**val)
                     self.__objects.update({k: obj})
