@@ -38,6 +38,8 @@ class FileStorage():
         """serializes (converts the objects in) self.objects to the JSON file"""
         json_string = json.dumps(self.objects, 
                                  default=lambda x: x.to_dict())
+        with open(self.__file_path, 'w', encoding="utf-8") as f:
+            json.dump(json_string, f)
 
     def get_class(self, value: dict) -> models.BaseModel:
         """return the Class object of an instance persisted in JSON format"""
