@@ -7,7 +7,7 @@ from models import storage
 
 class BaseModel():
     """class BaseModel"""
-    def __init__(self, *args, **kwargs):
+
     def __init__(self, *args, **kwargs):
         """
         initializes new instances
@@ -55,7 +55,6 @@ class BaseModel():
         to string using ISO 8601 format"""
         output_dict = {}
         for key, value in self.__dict__.items():
-            if isinstance(value, datetime):
             if isinstance(value, datetime):
                 output_dict.update({key: value.isoformat()})
             else:
