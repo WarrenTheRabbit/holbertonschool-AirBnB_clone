@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Navigate back to the repo root
+cd "${PWD%/.git/hooks}"
+
+# Install dependencies
+python -m pip install --upgrade pip
+pip install pycodestyle pytest
+if [ -f requirements.txt ]; then
+    pip install -r requirements.txt
+fi
+
+# Run pycodestyle
+echo "Running pycodestyle..."
+pycodestyle . --max-line-length=127
+if [ $? -ne 0 ]; then
+    echo "pycodestyle checks failed."
+    exit 1
+fi
+
+# Run pytest
+echo "Running tests..."
+pytest tests/
+if [ $? -ne 0 ]; then
+    echo "Tests failed."
+    exit 1
+fi
+
+# If we got here, everything passed
+exit 0
