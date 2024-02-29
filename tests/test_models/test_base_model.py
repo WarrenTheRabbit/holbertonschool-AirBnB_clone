@@ -21,8 +21,7 @@ class TestBaseModel(unittest.TestCase):
             pass
 
     def test_instance_can_be_created(self):
-        """Tests the initialization of the BaseModel class 
-        with no arguments
+        """Tests the initialization of the BaseModel class with no arguments
         """
         b = BaseModel()
         self.assertIsInstance(b, BaseModel)
@@ -75,7 +74,7 @@ class TestBaseModel(unittest.TestCase):
         self.assertFalse(b_dup is b)
 
     def test_string_representation(self):
-        """ Check that the __str__ method override exists 
+        """ Check that the __str__ method override exists
         and produces the correct output"""
         b = BaseModel()
         b_str = b.__str__()
