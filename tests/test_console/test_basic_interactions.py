@@ -33,6 +33,12 @@ class TestPrompt(unittest.TestCase):
 
     def test_help_command(self):
         user_input = "help"
+        expected = "(hbnb) \n"
+        expected += "Documented commands (type help <topic>):\n"
+        expected += "========================================\n"
+        expected += "EOF  help  quit\n\n"
+        expected += "(hbnb) "
+
         mocked_input = io.StringIO(user_input)
         output = io.StringIO()
 
@@ -41,13 +47,7 @@ class TestPrompt(unittest.TestCase):
         cmd.use_rawinput = False
         cmd.cmdloop()
 
-        self.assertMultiLineEqual(output.getvalue(), textwrap.dedent("""\
-            (hbnb)
-            Documented commands (type help <topic>):
-            ========================================
-            EOF  help  quit
-
-            (hbnb) """))
+        self.assertMultiLineEqual(output.getvalue(), expected)
 
     def test_quit_command(self):
         user_input = "quit"
@@ -86,7 +86,8 @@ class TestPrompt(unittest.TestCase):
         self.assertEqual(output.getvalue(), textwrap.dedent("""\
             (hbnb) EOF command to exit the program (Ctrl+D)
             (hbnb) Quit command to exit the program
-            (hbnb) List available commands with "help" or detailed help with "help cmd".
+            (hbnb) List available commands with "help" or detailed help with "help cmd".\n"""  # noqa
+            """\
             (hbnb) """))
 
 
