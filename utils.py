@@ -10,8 +10,7 @@ from models.amenity import Amenity
 
 
 def class_map():
-    """Function to return a mapping of classnames 
-    to class definitions
+    """Function to return a mapping of classnames to class definitions
     """
     return {
         "BaseModel": BaseModel,
