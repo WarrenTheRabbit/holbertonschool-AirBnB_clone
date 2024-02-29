@@ -26,7 +26,9 @@ class TestFileStorage(unittest.TestCase):
 
     def test_storage_is_instantiated(self):
         """Test that storage is instantiated and of correct type"""
+        self.resetStorage()
         self.assertEqual(type(storage).__name__, "FileStorage")
+        self.assertEqual(FileStorage._FileStorage__objects, {})
 
     def test_file_path_is_used_to_create_file(self):
         """Tests that the private variable value for attribute __file_pat
