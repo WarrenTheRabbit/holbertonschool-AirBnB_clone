@@ -25,7 +25,7 @@ class TestFileStorage(unittest.TestCase):
     """Test cases for the FileStorage class"""
 
     def setUp(self):
-        storage.objects = {}
+        storage._FileStorage__objects = {}
         remove_persisted_data(storage_path)
 
     def test_that_storage_starts_without_any_objects_in_memory(self):
