@@ -5,4 +5,8 @@ from models.state import State
 
 
 class TestState(unittest.TestCase):
-    pass
+    """Test case for State class"""
+
+    def test_that_state_instance_creation(self):
+        state = State()
+        self.assertEqual(state.name, "")
