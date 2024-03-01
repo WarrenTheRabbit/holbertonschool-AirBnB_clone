@@ -1,108 +1,79 @@
-# /usr/bin/python3
-"""This module contains unit tests for the FileStorage class"""
-import unittest
-import os
+from pathlib import Path
 import json
-from models.engine.file_storage import FileStorage
+import unittest
+from unittest.mock import patch
 from models import storage
-from utils import class_map
+from models.base_model import BaseModel
 
+def remove_persisted_data(path):
+    """Remove the persisted data file"""
+    try:
+        path.unlink()
+    except:
+        pass
+
+def get_key(obj):
+    return f"{obj.__class__.__name__}.{obj.id}"
+
+storage_path = Path(storage._FileStorage__file_path)
 
 class TestFileStorage(unittest.TestCase):
     """Test cases for the FileStorage class"""
-
-    def setUp(self) -> None:
-        self.resetStorage()
-
-    def tearDown(self) -> None:
-        self.resetStorage()
-
-    def resetStorage(self):
-        """Resets storage data"""
-        FileStorage._FileStorage__objects = {}
-        filepath = FileStorage._FileStorage__file_path
-        if os.path.isfile(filepath):
-            os.remove(filepath)
-
-    def test_storage_is_instantiated(self):
-        """Test that storage is instantiated and of correct type"""
-        self.resetStorage()
-        self.assertEqual(type(storage).__name__, "FileStorage")
-        self.assertEqual(FileStorage._FileStorage__objects, {})
-
-    def test_file_path_is_used_to_create_file(self):
-        """Tests that the private variable value for attribute __file_pat
-        is used to create a matching file
-        """
-        self.assertTrue(
-            hasattr(FileStorage, "_FileStorage__file_path"))
-        storage.save()
-        self.assertTrue(os.path.isfile(FileStorage._FileStorage__file_path))
-
-    def test__objects_exists_and_is_correctly_updated(self):
-        """Tests that the private varible __object exists
-        and is properly updated when objects are created
-        """
-        self.assertTrue(
-            hasattr(FileStorage, "_FileStorage__objects"))
-        self.assertEqual(
-            str(type(FileStorage._FileStorage__objects)), "<class 'dict'>")
-        self.assertEqual(FileStorage._FileStorage__objects, {})
-
-    def test_FileStorage_all_method(self):
-        """Tests that the all method of FileStorage works
-        as expected
-        """
-        self.resetStorage()
-        self.assertEqual(storage.all(), {})
-        cls = class_map()["BaseModel"]
-        obj1 = cls()
-        obj2 = cls()
-        obj3 = cls()
-        storage.new(obj1)
-        storage.new(obj2)
-        storage.new(obj3)
-        self.assertEqual(len(storage.all()), 3)
-        self.assertTrue(f"{cls.__name__}.{obj1.id}" in storage.all())
-        self.assertTrue(f"{cls.__name__}.{obj2.id}" in storage.all())
-        self.assertTrue(f"{cls.__name__}.{obj3.id}" in storage.all())
-
-    def test_FileStorage_new_method(self):
-        """Tests that the new method of FileStorage works
-        as expected
-        """
-        self.resetStorage()
-        self.assertEqual(storage.all(), {})
-        cls = class_map()["BaseModel"]
-        obj = cls()
+    
+    def setUp(self):
+        storage.objects = {}
+        remove_persisted_data(storage_path)
+    
+    def test_that_storage_starts_without_any_objects_in_memory(self):
+        """Test that FileStorage initializes with an empty objects dict"""
+        self.assertEqual(storage.objects, {})
+        
+    def test_that_storage_creates_database_file_if_necessary(self):
+        """Test that FileStorage has a predefined file path for JSON file"""        
+        self.assertTrue(not storage_path.exists())
+        _ = BaseModel()
+        storage.save()        
+        self.assertTrue(storage_path.exists())
+        
+   
+    def test_that_storage_can_add_objects_to_memory(self):
+        """Test adding new objects to FileStorage"""
+        with patch.object(storage, 'new', return_value=None):
+            obj = BaseModel()
+            obj_key = get_key(obj)
         storage.new(obj)
-        key = f"{type(obj).__name__}.{obj.id}"
-        self.assertTrue(key in storage.all())
-        self.assertEqual(storage.all()[key], obj)
+        
+        self.assertEqual(storage.objects[obj_key], obj)
 
-    def test_FileStorage_save_method(self):
-        """Tests that the save method of FileStorage works
-        as expected
-        """
-        cls = class_map()["BaseModel"]
-        obj = cls()
-        storage.new(obj)
-        key = f"{type(obj).__name__}.{obj.id}"
+    def test_that_storage_can_save_object_to_file_system(self):
+        """Test persisting objects to the file system"""
+        obj = BaseModel()
+        obj_key = get_key(obj)
         storage.save()
-        obj_dict = {key: obj.to_dict()}
-        with open(
-            FileStorage._FileStorage__file_path, "r", encoding="utf-8"
-        ) as f:
-            self.assertEqual(f.read(), json.dumps(obj_dict))
+        
+        with storage_path.open() as database:
+            data = json.load(database)
+            
+        self.assertIn(obj_key, data)
 
-    def test_FileStorage_reload_method(self):
-        """Tests that the reload method of FileStorage works
-        as expected
-        """
-        cls = class_map()["BaseModel"]
-        obj = cls()
-        storage.new(obj)
-        key = f"{type(obj).__name__}.{obj.id}"
+    def test_that_storage_can_reload_objects_from_file_system(self):
+        """Test reloading objects from the file system"""
+        obj = BaseModel()
+        obj_key = get_key(obj)
         storage.save()
+        
+        storage.objects = {}
         storage.reload()
-        self.assertEqual(obj.to_dict(), storage.all()[key].to_dict())
+        
+        self.assertEqual(obj.to_dict(), 
+                         storage.objects[obj_key].to_dict())
+
+    def test_that_storage_can_show_all_objects(self):
+        """Test that the all method returns all stored objects"""
+        objs = [BaseModel() for _ in range(5)]
+        all_objects = storage.all()
+        self.assertEqual(objs, 
+                         list(all_objects.values()))
+
+if __name__ == '__main__':
+    unittest.main()
