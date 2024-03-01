@@ -5,4 +5,10 @@ from models.review import Review
 
 
 class TestReview(unittest.TestCase):
-    pass
+    """Test case for Review class"""
+
+    def test_review_instance_creation(self):
+        review = Review()
+        self.assertEqual(review.place_id, "")
+        self.assertEqual(review.user_id, "")
+        self.assertEqual(review.text, "")
