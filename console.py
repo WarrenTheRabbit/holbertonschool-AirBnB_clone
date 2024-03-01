@@ -52,13 +52,15 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
 
-        cls, id = arg.split()
+        cls, *id_list = arg.split(maxsplit=1)
+        id = ' '.join(id_list)
         if cls not in class_map:
             print("** class doesn't exist **")
             return False
 
         if not id:
             print("** instance id missing **")
+            return False
 
         key = f"{cls}.{id}"
         all_objs = models.storage.all()
@@ -66,6 +68,7 @@ class HBNBCommand(cmd.Cmd):
         if not obj:
             print("** no instance found **")
             return False
+
         print(obj)
 
     def do_destroy(self, arg):
@@ -76,13 +79,15 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
 
-        cls, *id = arg.split()
+        cls, *id_list = arg.split()
+        id = ' '.join(id_list)
         if cls not in class_map:
             print("** class doesn't exist **")
             return False
 
         if not id:
             print("** instance id missing **")
+            return False
 
         key = f"{cls}.{id}"
         all_objs = models.storage.all()
@@ -97,6 +102,11 @@ class HBNBCommand(cmd.Cmd):
         """Prints all string representation of all instances
         based or not on the class name
         """
+
+        if arg not in class_map:
+            print("** class doesn't exist **")
+            return False
+
         if not arg:
             result = [str(models.storage.objects[key])
                       for key
@@ -119,25 +129,34 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
 
-        cls, id, name, value, *_ = arg.split()
-        if cls not in class_map:
+        cls = id = name = value = None
+        args_ls = [cls, id, name, value]
+
+        for index, value in enumerate(arg.split()):
+            if index > 3:
+                continue
+            args_ls[index] = value
+
+        if args_ls[0] not in class_map:
             print("** class doesn't exist **")
             return False
 
-        if not id:
+        if not args_ls[1]:
             print("** instance id missing **")
             return False
 
-        if not name:
+        if not args_ls[2]:
             print("** attribute name missing **")
             return False
 
-        if not value:
+        if not args_ls[3]:
             print("** value missing **")
+            return False
 
         key = f"{cls}.{id}"
         all_objs = models.storage.all()
         obj = all_objs.get(key, None)
+
         if not obj:
             print("** no instance found **")
             return False
