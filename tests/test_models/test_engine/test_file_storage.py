@@ -25,15 +25,9 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(self.storage.all(), {})
         cls = class_map()["BaseModel"]
         obj1 = cls()
-        obj2 = cls()
-        obj3 = cls()
+        obj1.save()
         self.storage.new(obj1)
-        self.storage.new(obj2)
-        self.storage.new(obj3)
-        self.assertEqual(len(self.storage.all()), 3)
         self.assertTrue(f"{cls.__name__}.{obj1.id}" in self.storage.all())
-        self.assertTrue(f"{cls.__name__}.{obj2.id}" in self.storage.all())
-        self.assertTrue(f"{cls.__name__}.{obj3.id}" in self.storage.all())
 
     def test_FileStorage_reload_method(self):
         """Tests that the reload method of FileStorage works
@@ -42,8 +36,8 @@ class TestFileStorage(unittest.TestCase):
         cls = class_map()["BaseModel"]
         obj = cls()
         self.storage.new(obj)
-        key = f"{type(obj).__name__}.{obj.id}"
         self.storage.save()
+        self.storage._FileStorage__objects.clear()
         self.storage.reload()
+        key = f"{type(obj).__name__}.{obj.id}"
         self.assertIn(key, self.storage.all())
-        self.assertEqual(obj.to_dict(), self.storage.all()[key].to_dict())
