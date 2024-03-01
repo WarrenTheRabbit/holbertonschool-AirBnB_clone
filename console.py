@@ -44,6 +44,106 @@ class HBNBCommand(cmd.Cmd):
             obj.save()
             print(obj.id)
 
+    def do_show(self, arg):
+        """Prints the string representation of an instance
+        based on the class name and id
+        """
+        if not arg:
+            print("** class name missing **")
+            return False
+
+        cls, id = arg.split()
+        if not cls in class_map:
+            print("** class doesn't exist **")
+            return False
+
+        if not id:
+            print("** instance id missing **")
+
+        key = f"{cls}.{id}"
+        all_objs = models.storage.all()
+        obj = all_objs.get(key, None)
+        if not obj:
+            print("** no instance found **")
+            return False
+        print(obj)
+
+    def do_destroy(self, arg):
+        """Deletes an instance based on the class name
+        and id (save the change into the JSON file)
+        """
+        if not arg:
+            print("** class name missing **")
+            return False
+
+        cls, id = arg.split()
+        if not cls in class_map:
+            print("** class doesn't exist **")
+            return False
+
+        if not id:
+            print("** instance id missing **")
+
+        key = f"{cls}.{id}"
+        all_objs = models.storage.all()
+        obj = all_objs.get(key, None)
+        if not obj:
+            print("** no instance found **")
+            return False
+
+        obj.remove(key)
+
+    def do_all(self, arg):
+        """Prints all string representation of all instances
+        based or not on the class name
+        """
+        if not arg:
+            result = [str(models.storage.objects[key])
+                      for key
+                      in models.storage.objects
+                      ]
+        else:
+            result = [str(models.storage.objects[key])
+                      for key
+                      in models.storage.objects
+                      if key.startswith(arg + '.')
+                      ]
+        print(result)
+
+    def do_update(self, arg):
+        if not arg:
+            print("** class name missing **")
+            return False
+
+        cls, id, name, value, *_ = arg.split()
+        if not cls in class_map:
+            print("** class doesn't exist **")
+            return False
+
+        if not id:
+            print("** instance id missing **")
+            return False
+
+        if not name:
+            print("** attribute name missing **")
+            return False
+
+        if not value:
+            print("** value missing **")
+
+        key = f"{cls}.{id}"
+        all_objs = models.storage.all()
+        obj = all_objs.get(key, None)
+        if not obj:
+            print("** no instance found **")
+            return False
+
+        if hasattr(obj, name):
+            attr = getattr(obj, name)
+            T = type(attr)
+            setattr(obj, name, T(value))
+            obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

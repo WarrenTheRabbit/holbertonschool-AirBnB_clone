@@ -43,10 +43,8 @@ class BaseModel():
         """removes object from storage
         key: "<class name>.<instance id>"
         """
-        storage_dic = storage.objects
-        if key in storage_dic:
-            storage_dic.pop(key)
-            storage.objects = storage_dic
+        obj = storage.objects.pop(key, None)
+        if obj:
             storage.save()
 
     def to_dict(self):
