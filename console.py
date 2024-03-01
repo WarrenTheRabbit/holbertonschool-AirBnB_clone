@@ -76,7 +76,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return False
 
-        cls, id = arg.split()
+        cls, *id = arg.split()
         if cls not in class_map:
             print("** class doesn't exist **")
             return False
