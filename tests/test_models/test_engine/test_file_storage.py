@@ -5,7 +5,6 @@ import os
 from models.engine.file_storage import FileStorage
 from utils import class_map
 
-
 class TestFileStorage(unittest.TestCase):
     """Test cases for the FileStorage class"""
 
