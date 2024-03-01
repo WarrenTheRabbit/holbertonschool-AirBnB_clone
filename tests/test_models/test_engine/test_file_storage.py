@@ -31,6 +31,10 @@ class TestFileStorage(unittest.TestCase):
     def test_that_storage_starts_without_any_objects_in_memory(self):
         """Test that FileStorage initializes with an empty objects dict"""
         self.assertEqual(storage.objects, {})
+        
+    def test_that_private_attribute_equals_public_attribute(self):
+        """Test that the private attribute __objects is accessed via the public attribute objects"""
+        self.assertIs(storage.objects, storage._FileStorage__objects)
 
     def test_that_storage_creates_database_file_if_necessary(self):
         """Test that FileStorage has a predefined file path for JSON file"""
