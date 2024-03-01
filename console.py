@@ -37,7 +37,7 @@ class HBNBCommand(cmd.Cmd):
         """
         if not arg:
             print("** class name missing **")
-        elif not arg in class_map:
+        elif arg not in class_map:
             print("** class doesn't exist **")
         else:
             obj = class_map[arg]()
@@ -53,7 +53,7 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         cls, id = arg.split()
-        if not cls in class_map:
+        if cls not in class_map:
             print("** class doesn't exist **")
             return False
 
@@ -77,7 +77,7 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         cls, id = arg.split()
-        if not cls in class_map:
+        if cls not in class_map:
             print("** class doesn't exist **")
             return False
 
@@ -116,7 +116,7 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         cls, id, name, value, *_ = arg.split()
-        if not cls in class_map:
+        if cls not in class_map:
             print("** class doesn't exist **")
             return False
 
