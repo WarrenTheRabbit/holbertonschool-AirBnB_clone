@@ -65,7 +65,7 @@ class AttributeArgument:
 
 class ValueArgument:
     """The value argument is used to represent the value of an instance."""
-    value = NotNone(error="** value is missing **")
+    value = NotNone(error="** value missing **")
 
     def __init__(self, value):
         self.value = value
