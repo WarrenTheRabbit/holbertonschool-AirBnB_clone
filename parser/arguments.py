@@ -48,7 +48,7 @@ class OneOf(Validator):
 
 class IDArgument():
     """The id argument is used to represent the id of an instance."""
-    value = NotNone(error="** id is missing **")
+    value = NotNone(error="** instance id missing **")
 
     def __init__(self, value):
         self.value = value
