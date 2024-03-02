@@ -57,7 +57,7 @@ class IDArgument():
 class AttributeArgument:
     """The attribute argument is used to represent the attribute
     of an instance."""
-    value = NotNone(error="** attribute is missing **")
+    value = NotNone(error="** attribute name missing **")
 
     def __init__(self, value):
         self.value = value
