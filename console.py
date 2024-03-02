@@ -43,7 +43,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """Creates a new instance of BaseModel, saves it (to the JSON file)
-        and prints the ID"""
+        and prints the id"""
         try:
             cls = parse_args(args, ClassArgument)
         except ValueError as e:
@@ -56,10 +56,10 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, args):
         """Prints the string representation of an instance based on the
-        class name and ID
+        class name and id
         """
         try:
-            cls, id_ parse_args(args,
+            cls, id_ = parse_args(args,
                                  ClassArgument,
                                  IDArgument)
         except ValueError as e:
@@ -67,7 +67,7 @@ class HBNBCommand(cmd.Cmd):
             return False
         else:
             try:
-                key = f"{cls}.{ID}"
+                key = f"{cls}.{id_}"
                 obj = models.storage.objects[key]
                 print(obj)
             except KeyError:
@@ -75,17 +75,17 @@ class HBNBCommand(cmd.Cmd):
                 return False
 
     def do_destroy(self, arg):
-        """Deletes an instance based on the class name and ID (save the
+        """Deletes an instance based on the class name and id (save the
         change into the JSON file)"""
         try:
-            cls, id_ parse_args(arg,
+            cls, id_ = parse_args(arg,
                                  ClassArgument,
                                  IDArgument)
         except ValueError as e:
             print(str(e))
             return False
         else:
-            key = f"{cls}.{ID}"
+            key = f"{cls}.{id_}"
             obj = models.storage.objects.get(key, None)
             if obj is None:
                 print("** no instance found **")
@@ -120,10 +120,10 @@ class HBNBCommand(cmd.Cmd):
                    if key.startswith(cls + '.')])
 
     def do_update(self, args):
-        """Updates an instance based on the class name and ID by adding
+        """Updates an instance based on the class name and id by adding
         or updating attribute (save the change into the JSON file)"""
         try:
-            cls, ID, attr, value = parse_args(args,
+            cls, id, attr, value = parse_args(args,
                                               ClassArgument,
                                               IDArgument,
                                               AttributeArgument,
@@ -131,7 +131,7 @@ class HBNBCommand(cmd.Cmd):
         except ValueError as e:
             print(str(e))
         else:
-            key = f"{cls}.{ID}"
+            key = f"{cls}.{id_}"
             obj = models.storage.objects.get(key, None)
             if obj is None:
                 print("** no instance found **")
