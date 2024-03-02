@@ -8,7 +8,7 @@ def cast(value):
         return str(value)
 
 
-def format_objectoriented_to_command_language(line):
+def format_objectoriented_to_command_language(oo_command):
     """Given user input in object-oriented like syntax, conver it
     to the syntax used by the command line interface.
 
@@ -17,15 +17,14 @@ def format_objectoriented_to_command_language(line):
         User.count()                        --> count User
         User.update("id", "attr", "value")  --> update User id attr value
     """
-    if not re.match(r'^\w+\.\w+\(.*\)$', line):
+    if not re.match(r'^\w+\.\w+\(.*\)$', oo_command):
         raise ValueError("Invalid command syntax")
     try:
-        replacements = ['().,"']
+        replacements = '().,"'
         oo_command = "".join([char
-                              if char in replacements
-                              else ""
+                              if char not in replacements
+                              else " "
                               for char in line])
-
         parts = oo_command.split()
         cls = parts[0]
         command = parts[1]
