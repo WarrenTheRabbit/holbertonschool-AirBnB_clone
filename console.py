@@ -60,8 +60,8 @@ class HBNBCommand(cmd.Cmd):
         """
         try:
             cls, id_ = parse_args(args,
-                                 ClassArgument,
-                                 IDArgument)
+                                  ClassArgument,
+                                  IDArgument)
         except ValueError as e:
             print(str(e))
             return False
@@ -79,8 +79,8 @@ class HBNBCommand(cmd.Cmd):
         change into the JSON file)"""
         try:
             cls, id_ = parse_args(arg,
-                                 ClassArgument,
-                                 IDArgument)
+                                  ClassArgument,
+                                  IDArgument)
         except ValueError as e:
             print(str(e))
             return False
@@ -123,11 +123,11 @@ class HBNBCommand(cmd.Cmd):
         """Updates an instance based on the class name and id by adding
         or updating attribute (save the change into the JSON file)"""
         try:
-            cls, id, attr, value = parse_args(args,
-                                              ClassArgument,
-                                              IDArgument,
-                                              AttributeArgument,
-                                              ValueArgument)
+            cls, id_, attr, value = parse_args(args,
+                                               ClassArgument,
+                                               IDArgument,
+                                               AttributeArgument,
+                                               ValueArgument)
         except ValueError as e:
             print(str(e))
         else:
