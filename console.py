@@ -183,6 +183,7 @@ class HBNBCommand(cmd.Cmd):
             else:
                 T = int
 
+
         setattr(obj, att_name, T(attr_val))
         obj.save()
 
