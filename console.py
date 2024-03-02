@@ -52,14 +52,14 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj = class_map[cls]()
             obj.save()
-            print(obj.ID)
+            print(obj.id)
 
     def do_show(self, args):
         """Prints the string representation of an instance based on the
         class name and ID
         """
         try:
-            cls, ID = parse_args(args,
+            cls, id_ parse_args(args,
                                  ClassArgument,
                                  IDArgument)
         except ValueError as e:
@@ -78,7 +78,7 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on the class name and ID (save the
         change into the JSON file)"""
         try:
-            cls, ID = parse_args(arg,
+            cls, id_ parse_args(arg,
                                  ClassArgument,
                                  IDArgument)
         except ValueError as e:

@@ -25,14 +25,14 @@ class BaseModel():
                 else:
                     setattr(self, key, value)
         else:
-            self.ID = str(uuid.uuid4())
+            self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             storage.new(self)
 
     def __str__(self):
         """default print message"""
-        return f"[{self.__class__.__name__}] ({self.ID}) {self.__dict__}"
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """Save the instance into storage with updated time"""
@@ -43,7 +43,7 @@ class BaseModel():
         """removes object from storage
         key: "<class name>.<instance id>"
         """
-        key = f"{self.__class__.__name__}.{self.ID}"
+        key = f"{self.__class__.__name__}.{self.id}"
         obj = storage.objects.pop(key, None)
         if obj:
             storage.save()

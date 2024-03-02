@@ -35,7 +35,7 @@ class FileStorage():
         key: "<class name>.<instance id>"
         value: dictionary with obj attributes
         """
-        key = obj.__class__.__name__ + "." + obj.ID
+        key = obj.__class__.__name__ + "." + obj.id
         self.objects.update({key: obj})
 
     def save(self):
