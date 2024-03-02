@@ -8,9 +8,9 @@ def cast(value):
 def parse_args(args: str, *expectations):
     """Parse the provided arguments and validate them."""
     parsed_args = get_argument_values(args, len(expectations))
-    validated_args = [ validator(value=arg)
-                       for arg, validator 
-                       in zip(parsed_args, expectations)]
+    validated_args = [validator(value=arg)
+                      for arg, validator
+                      in zip(parsed_args, expectations)]
     if len(validated_args) == 1:
         return parsed_args[0]
     else:

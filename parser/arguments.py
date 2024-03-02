@@ -7,38 +7,38 @@ class Classes:
 
 
 class Validator:
-    
+
     def __init__(self, error):
         self.error = error
-    
+
     def __get__(self, instance, owner):
         return getattr(instance, '__value')
-    
+
     def __set__(self, instance, value):
         self.validate(value)
         setattr(instance, '__value', value)
-        
+
     @abstractmethod
     def validate(self, value):
         pass
 
 
 class NotNone(Validator):
-    
+
     def __init__(self, *, error):
         super().__init__(error)
-    
+
     def validate(self, value):
         if value is None:
             raise ValueError(self.error)
 
 
 class OneOf(Validator):
-    
+
     def __init__(self, *, error, choices):
         super().__init__(error)
         self.choices = choices
-        
+
     def validate(self, value):
         if value not in self.choices:
             raise ValueError(self.error)
@@ -47,15 +47,16 @@ class OneOf(Validator):
 class IDArgument():
     """The id argument is used to represent the id of an instance."""
     value = NotNone(error="** id is missing **")
-    
+
     def __init__(self, value):
         self.value = value
 
 
 class AttributeArgument:
-    """The attribute argument is used to represent the attribute of an instance."""
+    """The attribute argument is used to represent the attribute
+    of an instance."""
     value = NotNone(error="** attribute is missing **")
-    
+
     def __init__(self, value):
         self.value = value
 
@@ -63,18 +64,14 @@ class AttributeArgument:
 class ValueArgument:
     """The value argument is used to represent the value of an instance."""
     value = NotNone(error="** value is missing **")
-    
+
     def __init__(self, value):
         self.value = value
 
 
 class ClassArgument(Classes):
-    value = OneOf(error="** class is missing **", 
+    value = OneOf(error="** class is missing **",
                   choices=[*Classes.options])
-    
+
     def __init__(self, value):
         self.value = value
-
-
-    
-    
