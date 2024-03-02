@@ -9,10 +9,12 @@ def cast(value):
 
 
 def format_objectoriented_to_command_language(oo_command):
-    """Given user input in object-oriented like syntax, conver it
-    to the syntax used by the command line interface.
+    """Given user input in object-oriented-like syntax, convert it
+    to the  command language used by the console program.
 
     For example,
+        ohject-oriented syntax                  command languagw
+        ----------------------------------      -------------------------
         User.all()                          --> all User
         User.count()                        --> count User
         User.update("id", "attr", "value")  --> update User id attr value
