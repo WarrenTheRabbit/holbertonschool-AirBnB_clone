@@ -64,13 +64,14 @@ class HBNBCommand(cmd.Cmd):
         except ValueError as e:
             print(str(e))
             return False
-        try:
-            key = f"{cls}.{ID}"
-            obj = models.storage.objects[key]
-            print(obj)
-        except KeyError:
-            print("** no instance found **")
-            return False
+        else:
+            try:
+                key = f"{cls}.{ID}"
+                obj = models.storage.objects[key]
+                print(obj)
+            except KeyError:
+                print("** no instance found **")
+                return False
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and ID (save the
@@ -82,14 +83,13 @@ class HBNBCommand(cmd.Cmd):
         except ValueError as e:
             print(str(e))
             return False
-
-        key = f"{cls}.{ID}"
-        obj = models.storage.objects.get(key, None)
-        if obj is None:
-            print("** no instance found **")
-            return False
-
-        obj.remove()
+        else:
+            key = f"{cls}.{ID}"
+            obj = models.storage.objects.get(key, None)
+            if obj is None:
+                print("** no instance found **")
+                return False
+            obj.remove()
 
     def do_all(self, args):
         """Prints all string representation of all instances based or not
@@ -98,19 +98,17 @@ class HBNBCommand(cmd.Cmd):
             cls = parse_args(args, ClassArgument)
         except ValueError as e:
             cls = None
-
-        if not cls:
-            result = [str(models.storage.objects[key])
-                      for key
-                      in models.storage.objects
-                      ]
-        else:
-            result = [str(models.storage.objects[key])
-                      for key
-                      in models.storage.objects
-                      if key.startswith(cls + '.')
-                      ]
-        print(result)
+        finally:
+            if not cls:
+                result = [str(models.storage.objects[key])
+                          for key
+                          in models.storage.objects]
+            else:
+                result = [str(models.storage.objects[key])
+                          for key
+                          in models.storage.objects
+                          if key.startswith(cls + '.')]
+            print(result)
 
     def do_update(self, args):
         """Updates an instance based on the class name and ID by adding
@@ -123,16 +121,14 @@ class HBNBCommand(cmd.Cmd):
                                               ValueArgument)
         except ValueError as e:
             print(str(e))
-            return False
-
-        key = f"{cls}.{ID}"
-        obj = models.storage.objects.get(key, None)
-        if obj is None:
-            print("** no instance found **")
-            return False
-
-        setattr(obj, attr, cast(value))
-        models.storage.save()
+        else:
+            key = f"{cls}.{ID}"
+            obj = models.storage.objects.get(key, None)
+            if obj is None:
+                print("** no instance found **")
+                return False
+            setattr(obj, attr, cast(value))
+            models.storage.save()
 
 
 if __name__ == '__main__':
