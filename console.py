@@ -3,6 +3,7 @@
 import cmd
 import models
 from parser.argument_parser import (
+    format_objectoriented_to_command_language,
     parse_args,
     cast
 )
@@ -90,6 +91,15 @@ class HBNBCommand(cmd.Cmd):
                 print("** no instance found **")
                 return False
             obj.remove()
+
+    def precmd(self, line):
+        """Preprocess the command line for special syntax."""
+        try:
+            line = format_objectoriented_to_command_language(line)
+        except ValueError as e:
+            pass
+        finally:
+            return line
 
     def do_all(self, args):
         """Prints all string representation of all instances based or not
