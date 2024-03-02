@@ -28,7 +28,7 @@ class TestFileStorage(unittest.TestCase):
         obj1 = cls()
         obj1.save()
         self.storage.new(obj1)
-        self.assertTrue(f"{cls.__name__}.{obj1.id}" in self.storage.all())
+        self.assertTrue(f"{cls.__name__}.{obj1.ID}" in self.storage.all())
 
     def test_FileStorage_reload_method(self):
         """Tests that the reload method of FileStorage works
@@ -40,5 +40,5 @@ class TestFileStorage(unittest.TestCase):
         self.storage.save()
         self.storage._FileStorage__objects.clear()
         self.storage.reload()
-        key = f"{type(obj).__name__}.{obj.id}"
+        key = f"{type(obj).__name__}.{obj.ID}"
         self.assertIn(key, self.storage.all())
