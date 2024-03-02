@@ -25,7 +25,6 @@ def format_objectoriented_to_command_language(oo_command):
                               if char not in replacements
                               else " "
                               for char in line])
-
         parts = oo_command.split()
         cls = parts[0]
         command = parts[1]
