@@ -20,7 +20,7 @@ def format_objectoriented_to_command_language(oo_command):
         User.update("id", "attr", "value")  --> update User id attr value
     """
     if not re.match(r'^\w+\.\w+\(.*\)$', oo_command):
-        raise ValueError("Invalid command syntax")
+        raise ValueError("Invalid object-oriented syntax")
     try:
         replacements = '().,"'
         oo_command = "".join([char
@@ -33,7 +33,7 @@ def format_objectoriented_to_command_language(oo_command):
         args = " ".join(parts[2:])
         return f"{command} {cls} {args}"
     except Exception as e:
-        raise ValueError("Invalid command syntax")
+        raise ValueError("Incomplete object-oriented syntax")
 
 
 def parse_args(args: str, *expectations):
