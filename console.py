@@ -2,7 +2,16 @@
 """This is the logic and entry point for the AirBnB command interpreter."""
 import cmd
 import models
-
+from parser.argument_parser import (
+    parse_args,
+    cast
+)
+from parser.arguments import (
+    ClassArgument,
+    IDArgument,
+    AttributeArgument,
+    ValueArgument,
+)
 
 class_map = {
     "BaseModel": models.base_model.BaseModel,
@@ -31,89 +40,66 @@ class HBNBCommand(cmd.Cmd):
         """Do nothing on an empty input line"""
         pass
 
-    def do_create(self, arg):
-        """Creates a new instance of BaseModel, saves it
-        (to the JSON file) and prints the id
-        """
-        if not arg:
-            print("** class name missing **")
-        elif arg not in class_map:
-            print("** class doesn't exist **")
+    def do_create(self, args):
+        """Creates a new instance of BaseModel, saves it (to the JSON file)
+        and prints the ID"""
+        try:
+            cls = parse_args(args, ClassArgument)
+        except ValueError as e:
+            print(str(e))
+            return False
         else:
-            obj = class_map[arg]()
+            obj = class_map[cls]()
             obj.save()
-            print(obj.id)
+            print(obj.ID)
 
-    def do_show(self, arg):
-        """Prints the string representation of an instance
-        based on the class name and id
+    def do_show(self, args):
+        """Prints the string representation of an instance based on the
+        class name and ID
         """
-        if not arg:
-            print("** class name missing **")
+        try:
+            cls, ID = parse_args(args,
+                                 ClassArgument,
+                                 IDArgument)
+        except ValueError as e:
+            print(str(e))
             return False
-
-        cls, *id_list = arg.split(maxsplit=1)
-        id = ' '.join(id_list)
-        if cls not in class_map:
-            print("** class doesn't exist **")
-            return False
-
-        if not id:
-            print("** instance id missing **")
-            return False
-
-        key = f"{cls}.{id}"
-        all_objs = models.storage.all()
-        obj = all_objs.get(key, None)
-        if not obj:
+        try:
+            key = f"{cls}.{ID}"
+            obj = models.storage.objects[key]
+            print(obj)
+        except KeyError:
             print("** no instance found **")
             return False
-
-        print(obj)
 
     def do_destroy(self, arg):
-        """Deletes an instance based on the class name
-        and id (save the change into the JSON file)
-        """
-        if not arg:
-            print("** class name missing **")
+        """Deletes an instance based on the class name and ID (save the
+        change into the JSON file)"""
+        try:
+            cls, ID = parse_args(arg,
+                                 ClassArgument,
+                                 IDArgument)
+        except ValueError as e:
+            print(str(e))
             return False
 
-        cls, *id_list = arg.split()
-        id = ' '.join(id_list)
-        if cls not in class_map:
-            print("** class doesn't exist **")
-            return False
-
-        if not id:
-            print("** instance id missing **")
-            return False
-
-        key = f"{cls}.{id}"
-        all_objs = models.storage.all()
-        obj = all_objs.get(key, None)
-        if not obj:
+        key = f"{cls}.{ID}"
+        obj = models.storage.objects.get(key, None)
+        if obj is None:
             print("** no instance found **")
             return False
 
-        obj.remove(key)
+        obj.remove()
 
-    def do_all(self, arg):
-        """Prints all string representation of all instances
-        based or not on the class name
-        """
+    def do_all(self, args):
+        """Prints all string representation of all instances based or not
+        on the class name"""
+        try:
+            cls = parse_args(args, ClassArgument)
+        except ValueError as e:
+            cls = None
 
-        arg_ls = arg.split()
-        cls = None
-
-        if arg_ls:
-            cls = arg_ls[0]
-
-        if cls and cls not in class_map:
-            print("** class doesn't exist **")
-            return False
-
-        if not arg:
+        if not cls:
             result = [str(models.storage.objects[key])
                       for key
                       in models.storage.objects
@@ -122,68 +108,31 @@ class HBNBCommand(cmd.Cmd):
             result = [str(models.storage.objects[key])
                       for key
                       in models.storage.objects
-                      if key.startswith(arg + '.')
+                      if key.startswith(cls + '.')
                       ]
         print(result)
 
-    def do_update(self, arg):
-        """Updates an instance based on the class name
-        and id by adding or updating attribute
-        (save the change into the JSON file)
-        """
-        if not arg:
-            print("** class name missing **")
+    def do_update(self, args):
+        """Updates an instance based on the class name and ID by adding
+        or updating attribute (save the change into the JSON file)"""
+        try:
+            cls, ID, attr, value = parse_args(args,
+                                              ClassArgument,
+                                              IDArgument,
+                                              AttributeArgument,
+                                              ValueArgument)
+        except ValueError as e:
+            print(str(e))
             return False
 
-        args_ls = [None, None, None, None]
-
-        for index, value in enumerate(arg.split()):
-            if index > 3:
-                continue
-            args_ls[index] = value
-
-        cls_name = args_ls[0]
-        id = args_ls[1]
-        att_name = args_ls[2]
-        attr_val = args_ls[3]
-
-        if cls_name not in class_map:
-            print("** class doesn't exist **")
-            return False
-
-        if not id:
-            print("** instance id missing **")
-            return False
-
-        if not att_name:
-            print("** attribute name missing **")
-            return False
-
-        if not attr_val:
-            print("** value missing **")
-            return False
-
-        key = f"{cls_name}.{id}"
-        all_objs = models.storage.all()
-        obj = all_objs.get(key, None)
-
-        if not obj:
-            print(key)
+        key = f"{cls}.{ID}"
+        obj = models.storage.objects.get(key, None)
+        if obj is None:
             print("** no instance found **")
             return False
 
-        if hasattr(obj, att_name):
-            attr = getattr(obj, att_name, None)
-            T = type(attr)
-        else:
-            if (attr_val.startswith("\"") and
-               attr_val.endswith("\"")):
-                attr_val = attr_val[1:-1]
-                T = str
-            else:
-                T = int
-        setattr(obj, att_name, T(attr_val))
-        obj.save()
+        setattr(obj, attr, cast(value))
+        models.storage.save()
 
 
 if __name__ == '__main__':
