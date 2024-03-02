@@ -97,18 +97,17 @@ class HBNBCommand(cmd.Cmd):
         try:
             cls = parse_args(args, ClassArgument)
         except ValueError as e:
-            cls = None
-        finally:
-            if not cls:
-                result = [str(models.storage.objects[key])
-                          for key
-                          in models.storage.objects]
-            else:
-                result = [str(models.storage.objects[key])
-                          for key
-                          in models.storage.objects
-                          if key.startswith(cls + '.')]
-            print(result)
+            if str(e) == "** class doesn't exist **":
+                print(str(e))
+            if str(e) == "** class name missing **":
+                print([str(models.storage.objects[key])
+                       for key
+                       in models.storage.objects])
+        else:
+            print([str(models.storage.objects[key])
+                   for key
+                   in models.storage.objects
+                   if key.startswith(cls + '.')])
 
     def do_update(self, args):
         """Updates an instance based on the class name and ID by adding
