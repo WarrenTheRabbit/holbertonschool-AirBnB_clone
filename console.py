@@ -182,8 +182,6 @@ class HBNBCommand(cmd.Cmd):
                 T = str
             else:
                 T = int
-
-
         setattr(obj, att_name, T(attr_val))
         obj.save()
 
