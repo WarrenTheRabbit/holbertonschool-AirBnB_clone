@@ -1,8 +1,38 @@
+import re
+
+
 def cast(value):
     try:
         return int(value)
     except ValueError as e:
         return str(value)
+
+
+def format_objectoriented_to_command_language(line):
+    """Given user input in object-oriented like syntax, conver it
+    to the syntax used by the command line interface.
+
+    For example,
+        User.all()                          --> all User
+        User.count()                        --> count User
+        User.update("id", "attr", "value")  --> update User id attr value
+    """
+    if not re.match(r'^\w+\.\w+\(.*\)$', line):
+        raise ValueError("Invalid command syntax")
+    try:
+        replacements = ['().,"']
+        oo_command = "".join([char
+                              if char in replacements
+                              else ""
+                              for char in line])
+
+        parts = oo_command.split()
+        cls = parts[0]
+        command = parts[1]
+        args = " ".join(parts[2:])
+        return f"{command} {cls} {args}"
+    except Exception as e:
+        raise ValueError("Invalid command syntax")
 
 
 def parse_args(args: str, *expectations):
