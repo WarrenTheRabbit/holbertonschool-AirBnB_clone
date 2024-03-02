@@ -179,10 +179,9 @@ class HBNBCommand(cmd.Cmd):
             if (attr_val.startswith("\"") and
                attr_val.endswith("\"")):
                 attr_val = attr_val[1:-1]
-                T = type("")
+                T = str
             else:
-                T = type(1)
-
+                T = int
         setattr(obj, att_name, T(attr_val))
         obj.save()
 
