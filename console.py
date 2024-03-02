@@ -74,6 +74,20 @@ class HBNBCommand(cmd.Cmd):
                 print("** no instance found **")
                 return False
 
+    def do_count(self, arg):
+        """Count the number of instances of a class."""
+        try:
+            cls = parse_args(arg, ClassArgument)
+        except ValueError as e:
+            print(str(e))
+            return False
+        else:
+            print(len([key
+                       for key
+                       in models.storage.objects
+                       if key.startswith(cls + '.')
+                       ]))
+
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id (save the
         change into the JSON file)"""

@@ -36,7 +36,7 @@ class TestPrompt(unittest.TestCase):
         expected = "(hbnb) \n"
         expected += "Documented commands (type help <topic>):\n"
         expected += "========================================\n"
-        expected += "EOF  all  create  destroy  help  quit  show  update\n\n"
+        expected += "EOF  all  count  create  destroy  help  quit  show  update\n\n"  # noqa
         expected += "(hbnb) "
 
         mocked_input = io.StringIO(user_input)
