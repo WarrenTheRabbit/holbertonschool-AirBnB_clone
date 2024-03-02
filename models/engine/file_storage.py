@@ -24,6 +24,10 @@ class FileStorage():
         """returns the dictionary __objects"""
         return self.objects
 
+    def find(self, key):
+        """returns the object with the given key or None if not found"""
+        return self.objects.get(key, None)
+
     def new(self, obj):
         """
         Sets obj into __objects
@@ -31,7 +35,7 @@ class FileStorage():
         key: "<class name>.<instance id>"
         value: dictionary with obj attributes
         """
-        key = obj.__class__.__name__ + "." + obj.id
+        key = obj.__class__.__name__ + "." + obj.ID
         self.objects.update({key: obj})
 
     def save(self):
